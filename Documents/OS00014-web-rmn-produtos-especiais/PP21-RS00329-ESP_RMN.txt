@@ -1,0 +1,8 @@
+22/11/2021                                                                                    
+17/12/2021                                                                                    
+ESPECIAL-M          ESTRUTURA REU T6000 P2000 PE DIRET 2PE INTERM GIANDUIA                   100         2414,99
+ESPECIAL-M          PAINEL DE TV LARG 1200 X ALTURA 2700MM COR GIANDUIA                      200         1966,68
+ESPECIAL-M          PAINEL DE TV LARG 1800 X ALTURA 2700MM COR GIANDUIA                      100         2950,02
+ESPECIAL-M          TAMPO REDONDO DIAM 800MM COR AMENDOA                                     200          285,71
+ESPECIAL-M          TAMPO REUNIAO TRIPARTIDO ENCABECADO 6000X2000MM GIANDUIA ALUM FOSCO      100         5399,85
+# PEDIDO PRODUTOS DE LINHA PP21-RS00329

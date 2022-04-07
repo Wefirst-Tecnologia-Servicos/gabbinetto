@@ -1,0 +1,129 @@
+﻿
+span.erro { color: #922; }
+
+#divWaitAjax { display:none; }
+
+div.iconInput { position:relative; }
+
+textarea 
+{ 
+    white-space:normal; 
+    overflow:scroll!important; 
+    height:125px!important; 
+}
+div.iconInput img {
+    position:absolute;
+    right:12px;
+    top:12px;
+    filter: Alpha(Opacity=35);
+	opacity: .35;
+}
+
+#erro, #mensagem
+{
+    display:none;
+    color:#fff;
+    background:#b00;
+    padding:5px;
+}
+
+#mensagem
+{
+    background:#0b0;
+}
+
+input[disabled]
+{
+    border:solid 1px #555;
+    font-weight:bold;
+}
+
+table.grid  
+{
+    border:solid 1px #555; 
+    border-bottom:solid 0; 
+    border-right:solid 0;
+}
+
+table.grid tr *
+{
+    border:solid 1px #555; 
+    border-top:solid 0; 
+    border-left:solid 0;
+    padding:3px 5px;
+    background: #fff;
+}
+
+table.grid a
+{
+    border:solid 0;
+    text-decoration:none;
+    font-weight:bold;
+    color:#59b;
+}
+
+table.grid a:hover
+{
+    color:#269;
+}
+
+table.grid th
+{
+    font-weight:bold;
+    background:#bbb;
+}
+
+table.grid tr td
+{
+    cursor:pointer;
+}
+
+div.ui-checkbox
+{
+    display:inline-table;
+}
+
+@media (min-width: 1200px) {
+    .row{
+        display:block !important;
+    }
+}
+
+.col label{
+    margin-right: 25px;
+}
+
+table.table_parc tr th {
+    background: #ddd;
+}
+
+table.table_parc tr th, table.table_parc tr td, table.table_parc tr {
+    border: 1px solid #000 !important;
+}
+
+.table_parc {
+    width:100%;
+}
+
+.container {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.erroValidacao {
+    background: #F1CD89!important;
+}
+
+.button-search {
+    padding: 5px 5px;
+    background: #f6f6f6;
+    border: solid 1px #dddddd;
+    border-radius: 8px;
+    display: inline-table;
+    width: 35px;
+    margin: 0px 0 -50px 0;
+}
+
+.button-search:hover{
+    background: #ededed;
+}

@@ -1,0 +1,749 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Folha de Rosto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Portal do Representante Gabbinetto" />
+    <meta name="keywords" content="Gabbinetto,Representante,Consultor,Arquiteto,Móveis,Fábrica" />
+    <meta name="author" content="Victor Prospero" />
+    <link href="Scripts/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css" />
+    <link href="Scripts/tablesorter/themes/blue/style.css" rel="stylesheet" type="text/css" />
+    <link href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="Stylesheet" type="text/css" />
+    <link href="Scripts/Site.css" rel="stylesheet" type="text/css" />
+    <link href="Scripts/modal_buscar_cliente.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+    <script src="Scripts/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.maskmoney.3.0.2.js" type="text/javascript"></script>
+    <script src="Scripts/jput-2.js" type="text/javascript"></script>
+    <script src="Scripts/jqueryui-1.11.4.js" type="text/javascript"></script>
+    <script src="Scripts/tablesorter/jquery.tablesorter.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.inputmask.bundle.js" type="text/javascript"></script>
+    <script src="Scripts/Site.js" type="text/javascript"></script>
+    <script src="Scripts/calculos.js" type="text/javascript"></script>
+    <script src="Scripts/pessoa.js" type="text/javascript"></script>
+    <script src="Scripts/proposta_pedido.js" type="text/javascript"></script>
+    <script src="Scripts/rmn_import.js" type="text/javascript"></script>
+    <script type="text/javascript" language="javascript">
+
+        var sohAltera;
+
+        function calcular() {
+            somarProdutos();
+            changeJanelaPagto(false);
+            somenteProducao();
+            changeNumOcNF();
+            changePrazoEntrega();
+            getDesconto();
+            calcularTudo();
+        }
+
+        function encontrarValor() {
+            var vlSemDesc = $("#vl_total_com_ipi").maskMoney('unmasked')[0];
+            var vlInformado = $("#vl_total_com_ipi_desc").maskMoney('unmasked')[0];
+            var dscCalc = 100 - (vlInformado * 100 / vlSemDesc);
+            $("#desconto").val(dscCalc);
+            $("#desconto").val($("#desconto").val().replace(".", ","));
+            calcular();
+        }
+
+        function f_pedido_header(data) {
+            endAjax();
+            var fd = new FormData();
+            fd.append("action", "sp_noresult_pedido_np");
+
+            // percorre os campos gerando a querystring
+            $('[parametro]:not(.moeda, .cnpj, .percentual, #nf_diferenciada)').each(function () {
+                fd.append("p_" + $(this).attr("id"), $(this).val());
+            });
+            $('input[parametro].cnpj').each(function () {
+                fd.append("p_" + $(this).attr("id"), globalReplace($(this).val(), ".", "").replace("-", "").replace("/", ""));
+            });
+            $('input[parametro].moeda').each(function () {
+                fd.append("p_" + $(this).attr("id"), $(this).maskMoney('unmasked')[0]);
+            });
+            $('input[parametro].percentual').each(function () {
+                fd.append("p_" + $(this).attr("id"), $(this).val().replace(",", "."));
+            });
+            fd.append("p_produtos", getStringProdutos());
+
+            fd.append("p_" + $("textarea")[0].id, $("textarea").text());
+            fd.append("p_oc_nf_descricao", $("#oc_nf_descricao").text());
+            fd.append("p_janela_pagto_descricao", $("#janela_pagto_descricao").text());
+
+            fd.append("p_anexo_nome", $('#anexo_nome').val());
+            if ($('#anexo_nome')[0].files[0]) fd.append("p_anexo_arquivo", $('#anexo_nome')[0].files[0]);
+            fd.append("p_somente_altera", sohAltera);
+            startAjax();
+            //setTimeout(function() {
+            $.ajax({
+                type: "POST",
+                url: "HttpHandlers/json.ashx",
+                dataType: "json",
+                data: fd,
+                crossDomain: true,
+                processData: false,
+                contentType: false
+            })
+                //.done(function (jsonData) {
+                //	window.location.href = "fim.htm?tipo=r";
+                //})
+                .fail(function (jsonData) {
+                    console.log('erro: ' + jsonData.responseText);
+                    //window.location.href = "fim.htm?tipo=r";
+                })
+                .always(function (data) {
+                    endAjax();
+                    window.location.href = "fim.htm?tipo=r";
+                });
+            //}, 0.01);
+            //setTimeout(function() {
+            //	window.location.href = "fim.htm?tipo=r";
+            //}, 10000);
+        }
+    </script>
+</head>
+<body>
+    <input type="hidden" id="status" parametro="true" validationRule="$(this).val() != 'APROVADO'" validationMessage="- Este PP não pode ser re-enviado pois já foi aprovado." />
+    <div data-role="page">
+        <div data-role="header" style="background: #777; border-bottom: solid 1px #555; color: #eee; text-transform:uppercase;"><h1 style="text-shadow:0 1px 0 #555;">PEDIDO</h1></div>
+        <center data-role="content" style="background: #99aab5;">
+            <div id="erro" class="ui-corner-all"></div>
+            <div id="mensagem" class="ui-corner-all" onclick="$(this).hide();"></div>
+            <ul class="ui-listview ui-listview-inset ui-corner-all">
+                <li class="ui-li-divider ui-bar-a ui-first-child">Dados do Pedido</li>
+                <li class="ui-li-static ui-body-a ui-last-child">
+                    <label max="150px">
+                        PP:
+                        <input id="pp" type="text" parametro="true" onkeydown="mudarPP();" onblur="buscarOrcamento($(this).val());" validationRule="validarCodigoPP($(this).val())" validationMessage="- O formato do PP está incorreto" />
+                    </label>
+                    <label max="100px">
+                        Data:
+                        <input id="criado_em" type="text" parametro=true disabled="disabled" />
+                    </label>
+                    <label max="100px">
+                        Exportação?
+                        <select id="exportacao" parametro="true" onchange="calcular();">
+                            <option value="0">Não</option>
+                            <option value="1">Sim</option>
+                        </select>
+                    </label>
+                    <label max="150px">
+                        Tipo de Pedido:
+                        <select id="so_producao" parametro="true" onchange="calcular();" validationRule="$(this).val() != '' && $(this).val().length > 0" validationMessage="- Informe se o PP é somente produção.">
+                            <option value="">Selecione</option>
+                            <option value="N">Faturamento e Produção</option>
+                            <option value="F">Somente Faturamento</option>
+                            <option value="S">Somente Produção</option>
+                        </select>
+                    </label>
+                </li>
+            </ul>
+
+            <ul class="ui-listview ui-listview-inset ui-corner-all" id="ulCliente">
+                <li class="ui-li-divider ui-bar-a">Dados do Cliente Para Faturamento</li>
+                <li class="ui-li-static ui-body-a">
+                    <label>
+                        Tipo:
+                        <select id="f_tipo_pessoa" parametro="true" value="J" onchange="tipoPessoa('f');">
+                            <option value="J">Pessoa Jurídica</option>
+                            <option value="F">Pessoa Física</option>
+                        </select>
+                    </label>
+                    <label max="180px">
+                        CPF/CNPJ:
+                        <input type="text" id="f_cnpj" class="cnpj" parametro="true" validationRule="$(this).val() != '' && $(this).val().indexOf('_') == -1" validationMessage="- Verifique o preenchimento do CNPJ" />
+                    </label>
+                    <label max="50px">
+                        <input class="button-search" type="image" data-bs-toggle="modal" onclick="buscarPessoa()" data-bs-target="#exampleModal" src="Images/magnifying-glass-solid.svg" />
+                    </label>
+                    <label id="lbl_f_ie">
+                        Inscrição Estadual:
+                        <input type="text" id="f_ie" parametro="true" placeholder="ISENTO" onchange="getDesconto(); calcular();" />
+                    </label>
+                    <label max="400px">
+                        Nome/Raz&atilde;o Social:
+                        <input type="text" id="nome" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar a Razão Social" />
+                    </label>
+                    <br />
+                    <label max="200px">
+                        Contato:
+                        <input type="text" id="contato" parametro="true" />
+                    </label>
+                    <label max="300px">
+                        E-Mail:
+                        <input type="text" id="e_mail" parametro="true" />
+                    </label>
+                    <label max="200px">
+                        Contato 2:
+                        <input type="text" id="contato_2" parametro="true" />
+                    </label>
+                    <label max="300px">
+                        E-Mail (NF-e):
+                        <input type="text" id="e_mail_nfe" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o E-Mail da NF-e" />
+                    </label>
+                    <label max="140px">
+                        Telefone (1):
+                        <input type="text" id="fone_1" class="celular" parametro="true" />
+                    </label>
+                    <label max="140px">
+                        Telefone (2):
+                        <input type="text" id="fone_2" class="celular" parametro="true" />
+                    </label>
+                    <br />
+                    <label max="100px">
+                        CEP:
+                        <input type="text" id="f_cep" tipo_endereco="f" class="cep" parametro="true" validationRule="$(this).val() != '' && $(this).val().indexOf('_') == -1" validationMessage="- Verifique o preenchimento do CEP" />
+                    </label>
+                    <label max="300px">
+                        Logradouro:
+                        <input type="text" id="f_logradouro" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o Logradouro" />
+                    </label>
+                    <label max="80px">
+                        N&uacute;mero:
+                        <input type="text" id="f_numero" parametro="true" style="text-align:right;" class="inteiro" validationRule="semNumeroValida($('#f_numero_sn'), this)" validationMessage="- Informe o Número do Endereço" />
+                    </label>
+                    <div style="display:inline-table">
+                        &nbsp;<br />
+                        <label max="30px">
+                            S/N
+                            <input type="checkbox" id="f_numero_sn" onclick="semNumeroClick(this, $('#f_numero'))" />
+                        </label>
+                    </div>
+                    <label>
+                        Complemento:
+                        <input type="text" id="f_complemento" parametro="true" />
+                    </label>
+                    <label>
+                        Bairro:
+                        <input type="text" id="f_bairro" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o Bairro" />
+                    </label>
+                    <label max="300px">
+                        Cidade:
+                        <input type="text" id="f_cidade" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar a Cidade" />
+                    </label>
+                    <label>
+                        UF:
+                        <select id="f_uf" parametro="true" jput="fUf" onchange="getDesconto(); calcular();">
+                            <option value="{{json.uf}}" alicota_interna="{{json.alicota_interna}}" taxa_fecop="{{json.taxa_fecop}}" percentual_fecop="{{json.percentual_fecop}}">{{json.uf}}</option>
+                        </select>
+                    </label>
+                    <div role="controlgroup" data-type="horizontal" class="ui-corner-all ui-controlgroup ui-controlgroup-horizontal">
+                        <div class="ui-controlgroup-controls">
+                            <a href="javascript:copiar('f');" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Copiar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-left ui-btn-up-a">
+                                <span class="ui-btn-inner ui-corner-left">
+                                    <span class="ui-btn-text">Copiar</span>
+                                </span>
+                            </a>
+                            <a href="javascript:buscarEndereco('f');" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Buscar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-left ui-btn-up-a">
+                                <span class="ui-btn-inner">
+                                    <span class="ui-btn-text">Buscar</span>
+                                </span>
+                            </a>
+                            <a href="javascript:colar('f');" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Colar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-right ui-controlgroup-last ui-btn-up-b" style="border-right-width:1px;">
+                                <span class="ui-btn-inner ui-corner-right ui-controlgroup-last">
+                                    <span class="ui-btn-text">Colar</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="ui-li-divider ui-bar-a">Dados do Cliente Para Entrega</li>
+                <li class="ui-li-static ui-body-a">
+                    <label>
+                        Tipo:
+                        <select id="e_tipo_pessoa" parametro="true" value="J" onchange="tipoPessoa('e');">
+                            <option value="J">Pessoa Jurídica</option>
+                            <option value="F">Pessoa Física</option>
+                        </select>
+                    </label>
+                    <label max="180px">
+                        CPF/CNPJ:
+                        <input type="text" id="e_cnpj" class="cnpj" parametro="true" validationRule="$(this).val() != '' && $(this).val().indexOf('_') == -1" validationMessage="- Verifique o preenchimento do CNPJ de Entrega" />
+                    </label>
+                    <label id="lbl_e_ie">
+                        Inscrição Estadual:
+                        <input type="text" id="e_ie" parametro="true" placeholder="ISENTO" />
+                    </label>
+                    <br />
+                    <label max="100px">
+                        CEP:
+                        <input type="text" id="e_cep" tipo_endereco="e" class="cep" parametro="true" validationRule="$(this).val() != '' && $(this).val().indexOf('_') == -1" validationMessage="- Verifique o preenchimento do CEP de entrega" />
+                    </label>
+                    <label max="300px">
+                        Logradouro:
+                        <input type="text" id="e_logradouro" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o Logradouro de Entrega" />
+                    </label>
+                    <label max="80px">
+                        N&uacute;mero:
+                        <input type="text" id="e_numero" parametro="true" text-align:right;"=text-align:right;" class="inteiro" validationRule="semNumeroValida($('#e_numero_sn'), this)" validationMessage="- Informe o Número do Endereço de Entrega" />
+                    </label>
+                    <div style="display:inline-table">
+                        &nbsp;<br />
+                        <label max="30px">
+                            S/N
+                            <input type="checkbox" id="e_numero_sn" onclick="semNumeroClick(this, $('#e_numero'))" />
+                        </label>
+                    </div>
+                    <label>
+                        Complemento:
+                        <input type="text" id="e_complemento" parametro="true" />
+                    </label>
+                    <label>
+                        Bairro:
+                        <input type="text" id="e_bairro" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o Bairro de Entrega" />
+                    </label>
+                    <label max="300px">
+                        Cidade:
+                        <input type="text" id="e_cidade" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar a Cidade de Entrega" />
+                    </label>
+                    <label>
+                        UF:
+                        <select id="e_uf" parametro="true" jput="eUf">
+                            <option value="{{json.uf}}" alicota_interna="{{json.alicota_interna}}" taxa_fecop="{{json.taxa_fecop}}" percentual_fecop="{{json.percentual_fecop}}">{{json.uf}}</option>
+                        </select>
+                    </label>
+                    <div role="controlgroup" data-type="horizontal" class="ui-corner-all ui-controlgroup ui-controlgroup-horizontal">
+                        <div class="ui-controlgroup-controls">
+                            <a href="javascript:copiar('e');" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Copiar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-left ui-btn-up-a">
+                                <span class="ui-btn-inner ui-corner-left">
+                                    <span class="ui-btn-text">Copiar</span>
+                                </span>
+                            </a>
+                            <a href="javascript:buscarEndereco('e');" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Buscar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-left ui-btn-up-a">
+                                <span class="ui-btn-inner">
+                                    <span class="ui-btn-text">Buscar</span>
+                                </span>
+                            </a>
+                            <a href="javascript:colar('e');" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Colar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-right ui-controlgroup-last ui-btn-up-b" style="border-right-width:1px;">
+                                <span class="ui-btn-inner ui-corner-right ui-controlgroup-last">
+                                    <span class="ui-btn-text">Colar</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li class="ui-li-divider ui-bar-a">Dados do Cliente Para Cobran&ccedil;a</li>
+                <li class="ui-li-static ui-body-a ui-last-child">
+                    <label>
+                        Tipo:
+                        <select id="c_tipo_pessoa" parametro="true" value="J" onchange="tipoPessoa('c');">
+                            <option value="J">Pessoa Jurídica</option>
+                            <option value="F">Pessoa Física</option>
+                        </select>
+                    </label>
+                    <label max="180px">
+                        CPF/CNPJ:
+                        <input type="text" id="c_cnpj" class="cnpj" parametro="true" validationRule="$(this).val() != '' && $(this).val().indexOf('_') == -1" validationMessage="- Verifique o preenchimento do CNPJ de Cobrança" />
+                    </label>
+                    <label id="lbl_c_ie">
+                        Inscrição Estadual:
+                        <input type="text" id="c_ie" parametro="true" placeholder="ISENTO" />
+                    </label>
+                    <br />
+                    <label max="100px">
+                        CEP:
+                        <input type="text" id="c_cep" tipo_endereco="c" class="cep" parametro="true" validationRule="$(this).val() != '' && $(this).val().indexOf('_') == -1" validationMessage="- Verifique o preenchimento do CEP de Cobrança" />
+                    </label>
+                    <label max="300px">
+                        Logradouro:
+                        <input type="text" id="c_logradouro" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o Logradouro de Cobrança" />
+                    </label>
+                    <label max="80px">
+                        N&uacute;mero:
+                        <input type="text" id="c_numero" parametro="true" style="text-align:right;" class="inteiro" validationRule="semNumeroValida($('#c_numero_sn'), this)" validationMessage="- Informe o Número do Endereço de Cobrança" />
+                    </label>
+                    <div style="display:inline-table">
+                        &nbsp;<br />
+                        <label max="30px">
+                            S/N
+                            <input type="checkbox" id="c_numero_sn" onclick="semNumeroClick(this, $('#c_numero'))" />
+                        </label>
+                    </div>
+                    <label>
+                        Complemento:
+                        <input type="text" id="c_complemento" parametro="true" />
+                    </label>
+                    <label>
+                        Bairro:
+                        <input type="text" id="c_bairro" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar o Bairro de Cobrança" />
+                    </label>
+                    <label max="300px">
+                        Cidade:
+                        <input type="text" id="c_cidade" parametro="true" validationRule="$(this).val() != ''" validationMessage="- É obrigatório informar a Cidade de Cobrança" />
+                    </label>
+                    <label>
+                        UF:
+                        <select id="c_uf" parametro="true" jput="cUf">
+                            <option value="{{json.uf}}" alicota_interna="{{json.alicota_interna}}" taxa_fecop="{{json.taxa_fecop}}" percentual_fecop="{{json.percentual_fecop}}">{{json.uf}}</option>
+                        </select>
+                    </label>
+                    <div role="controlgroup" data-type="horizontal" class="ui-corner-all ui-controlgroup ui-controlgroup-horizontal">
+                        <div class="ui-controlgroup-controls">
+                            <a href="javascript:copiar('c');" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Copiar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-left ui-btn-up-a">
+                                <span class="ui-btn-inner ui-corner-left">
+                                    <span class="ui-btn-text">Copiar</span>
+                                </span>
+                            </a>
+                            <a href="javascript:buscarEndereco('c');" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Buscar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-left ui-btn-up-a">
+                                <span class="ui-btn-inner">
+                                    <span class="ui-btn-text">Buscar</span>
+                                </span>
+                            </a>
+                            <a href="javascript:colar('c');" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-inline="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" title="Colar" class="ui-btn ui-btn-inline ui-btn-icon-notext ui-corner-right ui-controlgroup-last ui-btn-up-b" style="border-right-width:1px;">
+                                <span class="ui-btn-inner ui-corner-right ui-controlgroup-last">
+                                    <span class="ui-btn-text">Colar</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+
+            <ul class="ui-listview ui-listview-inset ui-corner-all">
+                <li class="ui-li-divider ui-bar-a ui-first-child">Informações de Negociação (Valores de Tabela - Sem IPI)</li>
+                <li class="ui-li-static ui-body-a">
+
+                    <table id="tblProdutos" cellpadding="0" cellspacing="0" class="ui-corner-all grid" style="width:100%; margin-bottom:20px;">
+                        <thead>
+                            <tr>
+                                <th style="width:100px">C&oacute;digo</th>
+                                <th>Descri&ccedil;&atilde;o</th>
+                                <th style="width:80px; display:none;">Cor</th>
+                                <th style="width:100px">Revestimento</th>
+                                <th style="width:100px">Vl. Unit.</th>
+                                <th style="width:40px">Qtde.</th>
+                                <th style="width:100px">Vl. Total</th>
+                                <th style="width:100px; padding:0 10px; white-space:nowrap;">
+                                    <div id="btnAdicionarProduto" class="ui-btn ui-shadow ui-icon-plus ui-btn-icon-left ui-corner-all" style="padding:10px 0; background:#6f6; border: solid 1px #3c3; display:inline-table; width:40px;" onclick="selecionarProduto();">&nbsp;</div>
+                                    <div class="ui-btn ui-shadow ui-corner-all" style="padding: 10px 0; background: #ccc; border: solid 1px #888; display: inline-table; width: 40px;" onclick="RMNImportOpenDialog();">RMN</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="bdProdutos"></tbody>
+                    </table>
+
+                    <label max="150px">
+                        Assentos (<span id="spn_ipi_assentos"></span> %):
+                        <input type="text" id="vl_assentos" parametro="true" class="moeda" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o valor dos Assentos" />
+                        <input type="hidden" id="ipi_assentos" parametro="true" />
+                    </label>
+                    <label max="150px">
+                        Mobili&aacute;rio (<span id="spn_ipi_mobiliario"></span> %):
+                        <input type="text" id="vl_mobiliario" parametro="true" class="moeda" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o valor dos Mobiliário" />
+                        <input type="hidden" id="ipi_mobiliario" parametro="true" />
+                    </label>
+                    <label max="150px">
+                        Divis&oacute;rias (<span id="spn_ipi_divisorias"></span> %):
+                        <input type="text" id="vl_divisorias" parametro="true" class="moeda" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o valor das Divisórias" />
+                        <input type="hidden" id="ipi_divisorias" parametro="true" />
+                    </label>
+                    <label max="150px">
+                        Arq. Desl. (<span id="spn_ipi_arq_deslizante"></span> %):
+                        <input type="text" id="vl_arq_deslizante" parametro="true" value="0" class="moeda" validationRule="$(this).val() != ''" validationMessage="- Informe o valor dos Arquivos Deslizantes" />
+                        <input type="hidden" id="ipi_arq_deslizante" parametro="true" />
+                    </label>
+                    <label max="150px">
+                        Outros (<span id="spn_ipi_outros"></span> %):
+                        <input type="text" id="vl_outros" parametro="true" class="moeda" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o valor dos Outros Produtos" />
+                        <input type="hidden" id="ipi_outros" parametro="true" />
+                    </label>
+                    <label>
+                        Op&ccedil;&atilde;o de Pagamento:
+                        <select id="cod_fopag" parametro="true" jput="fopag" onchange="enable(this.value); calcular();" value="0" validationRule="$('#so_producao').val() == 'S' || parseInt($(this).val()) > -1" validationMessage="- Informe a Opção de Pagamento">
+                            <option value="{{json.codigo}}" desconto="{{json.desconto}}" desc_sem_ie_com_fecop="{{json.desc_sem_ie_com_fecop}}" desc_sem_ie_sem_fecop="{{json.desc_sem_ie_sem_fecop}}" tipo_dias="{{json.tipo_dias}}" tipo_dias_primeira="{{json.tipo_dias_primeira}}" dias_0="{{json.dias_0}}" dias_7="{{json.dias_7}}" dias_10="{{json.dias_10}}" dias_14="{{json.dias_14}}" dias_20="{{json.dias_20}}" dias_28="{{json.dias_28}}" dias_30="{{json.dias_30}}" dias_42="{{json.dias_42}}" dias_56="{{json.dias_56}}" dias_60="{{json.dias_60}}" dias_90="{{json.dias_90}}" dias_120="{{json.dias_120}}" dias_150="{{json.dias_150}}">{{json.descricao}}</option>
+                        </select>
+                    </label>
+                    <div id="dadosCartao">
+                        <label>
+                            Cartão de Crédito:
+                            <select id="cartao_bandeira" parametro="true" jput="cartoes">
+                                <option value="{{json.id_bandeira}}">{{json.cartao}}</option>
+                            </select>
+                        </label>
+                        <label>
+                            Número do Cartão:
+                            <input id="cartao_num_cartao" parametro="true" maxlength="20" />
+                        </label>
+                        <label max="150px">
+                            Cód. Segurança:
+                            <input id="cartao_cod_seguranca" parametro="true" maxlength="3" />
+                        </label>
+                        <label max="150px">
+                            Num. Parcelas:
+                            <input id="cartao_parcelas" parametro="true" maxlength="2" />
+                        </label>
+                    </div>
+                </li>
+                <li class="ui-li-divider ui-bar-a">Janela para Pagamento</li>
+                <li class="ui-li-static ui-body-a" id="liJanelaPagto">
+
+
+                    Janela para pagamento ou para Entrada de Nota Fiscal
+                    <br />
+                    <table cellpadding="0" cellspacing="0" style="width:100%;">
+                        <tr>
+                            <td style="width:150px; vertical-align:top;">
+                                <label max="140px" style="margin-right:15px;">
+                                    <select id="janela_pagto" parametro="true" onchange="changeJanelaPagto(true);" validationRule="$('#so_producao').val() == 'S' || ('NS'.indexOf($(this).val()) > -1 && $(this).text().length > 0)" validationMessage="Informe a janela de pagamento.">
+                                        <option value="">Selecionar</option>
+                                        <option value="S">Sim</option>
+                                        <option value="N">Não</option>
+                                    </select>
+                                </label>
+                            </td>
+                            <td style="vertical-align:top;">
+                                <label id="lblJanelaPagtoDescricao" max="550px">
+                                    <textarea id="janela_pagto_descricao" parametro="true" rows="0" cols="0" maxlength="150" style="height: 125px!important; overflow:hidden!important;"></textarea>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                    <label id="lblObsJanelaPagto" style="color:#f00;"></label>
+                </li>
+                <li class="ui-li-divider ui-bar-a">Valores Calculados</li>
+                <li class="ui-li-static ui-body-a">
+
+                    <table cellpadding="0" cellspacing="0" style="width:100%;">
+                        <tr>
+                            <td style="width:1520px; vertical-align:top;">
+                                <label max="100px" id="lblAgravo">
+                                    % Agr:
+                                    <input type="text" id="pc_agravo_produto" parametro="true" class="percentual" value="0" />
+                                </label>
+                                <label max="150px">
+                                    Total (sem IPI):
+                                    <input type="text" disabled="disabled" id="vl_total_sem_ipi" class="moeda" />
+                                </label>
+                                <label max="150px">
+                                    Total (com IPI):
+                                    <input type="text" disabled="disabled" id="vl_total_com_ipi" class="moeda" />
+                                </label>
+                                <label max="100px">
+                                    % Desconto:
+                                    <input type="text" id="desconto" parametro="true" class="percentual" />
+                                </label>
+                                <label max="150px">
+                                    Total Desc.(s/ IPI):
+                                    <input type="text" disabled="disabled" id="vl_total_sem_ipi_desc" class="moeda" />
+                                </label>
+                                <label max="150px">
+                                    Total Desc.(c/ IPI):
+                                    <input type="text" id="vl_total_com_ipi_desc" class="moeda" />
+                                </label>
+                                <label max="200px">
+                                    Tipo de Nota-Fiscal:
+                                    <select id="nf_diferenciada" parametro="true" validationRule="$('#so_producao').val() == 'S' || $(this).val() && $(this).val()!= ''" validationMessage="Informe o tipo de N.F.">
+                                        <option value="">Selecionar</option>
+                                        <option value="N">Nenhuma</option>
+                                        <option value="E">Espelho de N.F. Total</option>
+                                        <option value="F">N.F. Entrega Futura Produto</option>
+                                        <option value="S">N.F. Serviço Sinal</option>
+                                    </select>
+                                </label>
+                                <label max="200px">
+                                    Tipo de Sinal:
+                                    <select id="sinal_tipo" parametro="true" validationRule="$('#so_producao').val() == 'S' || ($(this).val() && $(this).val()!= '')" validationMessage="Informe o tipo de sinal.">
+                                        <option value="">Selecione</option>
+                                        <option value="N">Nenhum</option>
+                                        <option value="B">Boleto</option>
+                                        <option value="D">Depósito em Conta</option>
+                                    </select>
+                                </label>
+                                <label max="120px">
+                                    Data do Sinal:
+                                    <input value="" id="dt_sinal" parametro="true" class="date" validationRule="$('#cod_fopag option:selected').attr('tipo_dias_primeira').toUpperCase() != 'DDP' || ($(this).val() && $(this).val()!= '')" validationMessage="Favor informar a data do sinal." />
+                                </label>
+                                <label max="150px">
+                                    Nº OC Nota Fiscal:
+                                    <select id="oc_nf" parametro="true" onchange="changeNumOcNF()" validationRule="$('#so_producao').val() == 'S' || ($(this).val() == 'S' || $(this).val() == 'N')" validationMessage="Informe o Nº OC Nota Fiscal.">
+                                        <option value="">Selecione</option>
+                                        <option value="S">Sim</option>
+                                        <option value="N">Não</option>
+                                    </select>
+                                </label>
+                            </td>
+                            <td style="vertical-align:top;">
+                                <label id="lblGrupoOcNF" style="width:100%;">
+                                    Descrição OC Nota fiscal:
+                                    <textarea id="oc_nf_descricao" parametro="true" rows="0" cols="0" maxlength="150" style="height: 125px!important; overflow:hidden!important;" validationRule="$('#oc_nf').val() != 'S' || $(this).val().trim() != ''" validationMessage="Favor informar a descricao do  Nº OC Nota Fiscal."></textarea>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+                <li class="ui-li-divider ui-bar-a">
+                    <table cellspacing="0" cellpadding="0" style="width:100%">
+                        <tr>
+                            <td style="width:850px;">Valores e Vencimentos das Parcelas</td>
+                            <td style="text-align:left; padding-left:140px;">Observações</td>
+                        </tr>
+                    </table>
+                </li>
+                <li class="ui-li-static ui-body-a" id="liFopag">
+                    <table cellspacing="0" cellpadding="0" style="width:100%">
+                        <tr>
+                            <td style="width:850px; vertical-align:top">
+                                <input type="hidden" id="vl_parcelas" />
+                                <label max="120px">
+                                    <span></span>ª (Sinal):
+                                    <input type="text" disabled="disabled" id="vl_dias_0" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_0" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px">
+                                    <span></span>ª (7 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_7" class="moeda" /><br />
+                                    Pecentual:
+                                    <input type="text" id="dias_7" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",4,13,">
+                                    <span></span>ª (10 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_10" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_10" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px">
+                                    <span></span>ª (14 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_14" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_14" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",4,13,">
+                                    <span></span>ª (20 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_20" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_20" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px">
+                                    <span></span>ª (28 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_28" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_28" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",13,">
+                                    <span></span>ª (30 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_30" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_30" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px">
+                                    <span></span>ª (42 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_42" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_42" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px">
+                                    <span></span>ª (56 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_56" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_56" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",13,">
+                                    <span></span>ª (60 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_60" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_60" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",13,135,136,">
+                                    <span></span>ª (90 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_90" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_90" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",13,136,">
+                                    <span></span>ª (120 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_120" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_120" parametro="true" class="percentual" />
+                                </label>
+                                <label max="120px" exclusivo=",13,">
+                                    <span></span>ª (150 dias):
+                                    <input type="text" disabled="disabled" id="vl_dias_150" class="moeda" /><br />
+                                    Percentual:
+                                    <input type="text" id="dias_150" parametro="true" class="percentual" />
+                                </label>
+                            </td>
+                            <td style="vertical-align:top; padding-top:20px;">
+                                <textarea id="observacao" parametro="true" rows="0" cols="0" maxlength="200" style="height: 125px !important; overflow: hidden !important; width:550px;"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+                <li class="ui-li-divider ui-bar-a">Transporte</li>
+                <li class="ui-li-static ui-body-a">
+                    <label>
+                        Por Conta do:
+                        <select id="transp_responsavel" parametro="true" validationRule="$(this).val() && $(this).val() != ''" validationMessage="Favor informar o responsável pelo transporte">
+                            <option value="">Selecione</option>
+                            <option value="R">Representante</option>
+                            <option value="C">Cliente</option>
+                        </select>
+                    </label>
+                    <label max="400px">
+                        Empresa Transportadora:
+                        <input type="text" id="transportadora" parametro="true" />
+                    </label>
+                    <label max="140px">
+                        Telefone:
+                        <input type="text" class="celular" id="transp_fone" parametro="true" />
+                    </label><br />
+                    <label>
+                        Prazo de Entrega:
+                        <select id="entrega_prazo" parametro="true" value="U" validationRule="$(this).val() && $(this).val() != ''" validationMessage="Favor informar o prazo de entrega" onchange="changePrazoEntrega();">
+                            <option value="">Selecione</option>
+                            <option value="U">XX dias úteis</option>
+                            <option value="A">Consultado e Aprovado</option>
+                        </select>
+                    </label>
+                    <label dataconsult="" max="110px">
+                        Data Aprovada:
+                        <input value="" id="entrega_data" parametro="true" class="date" validationRule="validaEntregaData(this)" validationMessage="Favor informar a data de entrega aprovada." />
+                    </label>
+                    <label dataconsult="">
+                        Resp. Aprova&ccedil;&atilde;o:
+                        <select id="entrega_resp" parametro="true" value="BRENO" validationRule="($(this).val() && $(this).val() != '') || $('#entrega_prazo').val() == 'U'" validationMessage="Favor informar o responsável pela data de entrega aprovada.">
+                            <option value="">Selecione</option>
+                            <option value="BRENO">BRENO</option>
+                            <option value="SIDNEI">SIDNEI</option>
+                        </select>
+                    </label>
+                    <label id="lblTaxaUrgencia">
+                        Taxa de Urg&ecirc;ncia:
+                        <select id="taxa_urgencia" parametro="true" onchange="changeTaxaUrgencia();" validationRule="$('#entrega_prazo').val() != 'A' || ($(this).val() && $(this).val() != '')" validationMessage="Favor informar se possui taxa de urgência.">
+                            <option value="">Selecione</option>
+                            <option value="S">Sim</option>
+                            <option value="N">Não</option>
+                        </select>
+                    </label>
+                    <label id="lblValorTaxaUrgencia" max="130px">
+                        Valor da Taxa:
+                        <input type="text" id="vl_taxa_urgencia" parametro="true" class="moeda" value="0" validationRule="$('#entrega_prazo').val() != 'A' || $('#taxa_urgencia').val() != 'S' || $(this).val() != ''" validationMessage="- Informe o valor da taxa de urgência" />
+                    </label>
+
+                    <br />
+                    <label dataconsult="" id="obs_prazo" style="width:100%; color:#b00;"></label>
+                </li>
+                <li class="ui-li-divider ui-bar-a">Dados para Contato</li>
+                <li class="ui-li-static ui-body-a">
+                    <label>
+                        Representante:
+                        <input type="text" id="criado_por" parametro="true" disabled="disabled" />
+                        <input type="hidden" id="vendedor_responsavel" parametro="true" value="CAMPO REMOVIDO" />
+                    </label>
+                </li>
+                <li id="liAnexo" class="ui-li-divider ui-bar-a">Proposta (anexo)</li>
+                <li class="ui-li-static ui-body-a ui-last-child">
+                    <input type="file" id="anexo_nome" validationRule="$(this).val() != '' || !validarAnexo" validationMessage="- Inclua a proposta (anexo)" />
+                    <center>
+                        <div id="enviar" class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="gerarVisita('N');">Enviar Pedido</div>
+                        <div id="alterar" class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#f66; border: solid 1px #c33; max-width:500px; padding:20px; text-transform:uppercase;" onclick="gerarVisita('S');">Somente Alterar Informações</div>
+                    </center>
+                </li>
+            </ul>
+        </center>
+    </div>
+</body>
+</html>

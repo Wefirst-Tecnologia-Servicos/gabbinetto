@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Acesso ao Sistema</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+    <meta name="description" content="Portal do Representante Gabbinetto" />
+    <meta name="keywords" content="Gabbinetto,Representante,Consultor,Arquiteto,Móveis,Fábrica" />
+    <meta name="author" content="Victor Prospero" />
+    <link href="Scripts/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css" />
+    <link href="Scripts/Site.css" rel="stylesheet" type="text/css" />
+    <script src="Scripts/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
+    <script src="Scripts/Site.js" type="text/javascript"></script>
+    <script type="text/javascript" language="javascript">
+        function login() {
+            var erros = validar();
+            if (erros == '') getJsonP("f_login", "p_usuario=" + encodeURIComponent($('#usuario').val()) + "&p_senha=" + encodeURIComponent($('#senha').val()));
+            else showError(erros);
+        }
+        function showError(sErro) {
+            $('#usuario').focus();
+            $('span.erro').empty().append(sErro);
+        }
+        function f_login(retorno) {
+            endAjax();
+            if (retorno.resultado == 'true') window.location.href = "home.htm?tipo=" + retorno.tipo.toLowerCase();
+            else showError("O usuário ou senha está incorreto(s).");
+        }
+    </script>
+</head>
+<body>    
+    <div data-role="page" data-theme="a">
+        <div data-role="header"><h1>Folha de Rosto</h1></div>
+        <div role="main" class="ui-content" >
+            <center>
+                <div style="width:250px;">
+                    <img src="Images/logo.jpg" style="width:200px;" />
+                    <div class="iconInput">
+                        <input type="text" id="usuario" placeholder="Informe o usuário" maxlength="20" validationRule="$(this).val().trim() != ''" validationMessage="Favor informar o usuário" />
+                        <img src="Scripts/jquery.mobile-1.4.5/images/icons-png/user-black.png" alt="" />
+                    </div>
+                    <div class="iconInput">
+                        <input type="password" id="senha" placeholder="Informe a senha" maxlength="20" validationRule="$(this).val().trim() != ''" validationMessage="Favor informar a senha" />
+                        <img src="Scripts/jquery.mobile-1.4.5/images/icons-png/lock-black.png" alt="" />
+                    </div>
+                    <div class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right" onclick="login();">Login</div>
+                    <span class="erro">Favor utilizar o navegador Google Chrome.</span>
+                </div>
+            </center>
+        </div>
+    </div>
+</body>
+</html>

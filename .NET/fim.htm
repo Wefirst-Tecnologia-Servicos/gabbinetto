@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Gabbinetto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+    <meta name="description" content="Portal do Representante Gabbinetto" />
+    <meta name="keywords" content="Gabbinetto,Representante,Consultor,Arquiteto,Móveis,Fábrica" />
+    <meta name="author" content="Victor Prospero" />
+    <link href="Scripts/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css" rel="stylesheet" type="text/css" />
+    <link href="Scripts/Site.css" rel="stylesheet" type="text/css" />
+    <script src="Scripts/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="Scripts/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js" type="text/javascript"></script>
+    <script src="Scripts/Site.js" type="text/javascript"></script>
+    <script type="text/javascript" language="javascript">
+        function volta() { window.location.href = "home.htm?tipo=" + GetQueryStringParam("tipo"); }
+    </script>
+</head>
+<body>
+    <div data-role="page" data-theme="a">
+        <div data-role="header"><h1>Obrigado</h1></div>
+        <div role="main" class="ui-content">
+            <center>
+                <h1 style="max-width:500px; padding:20px;">Seu pedido foi enviado com sucesso.</hi>
+                <div class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="javascript:volta();">Página Inicial</div>
+                <div class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="window.location.href='index.htm';">Sair</div>
+            </center>
+        </div>
+    </div>
+</body>
+</html>

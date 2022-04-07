@@ -1,0 +1,76 @@
+﻿tbody tr.modal-row td{
+    cursor: pointer;
+}
+
+.modal-dialog {
+    max-width: 95% !important;
+    display: grid;
+    min-height: 75%;
+}
+
+.modal-header{
+    display: inline !important;
+    background-color: #e9e9e9;
+    padding: 5px 0 !important;
+}
+
+.form-control{
+    padding: 5px 10px !important;
+    margin: 10px 0px 0px 5px;
+    width: 30% !important;
+    display: inline !important;
+}
+
+.modal-col{
+    display: inline;
+    border: 1px solid #ccc;
+}
+
+.container {
+    margin: auto !important;
+}
+
+.grid-header {
+    background-color: #e9e9e9;
+}
+
+.modal-content{
+    min-height: 70%;
+    display:grid !important; 
+}
+
+.modal-body {
+    max-height: calc(85vh - 210px);
+    overflow-y: auto;
+}
+
+.row.modal-row {
+    display: flex !important;
+}
+
+/**mobile**/
+@media only screen and (max-width: 768px) {
+    .grid-header {
+      display:none !important;
+    }
+
+    .modal-row{
+        border: 1px solid #ccc;
+        display: grid;
+    }
+
+    .modal-col{
+        display: grid;
+        border: none;
+        width: 100% !important;
+    }
+    .col-2{
+        font-weight: bold;
+        min-width: 1200px;
+    }
+  }
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+    td.col-2, th.col-2{
+        min-width: 23%;
+    }
+}

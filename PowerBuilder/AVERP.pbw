@@ -1,0 +1,21 @@
+Save Format v3.0(19990112)
+@begin Unchecked
+ 0 "cpre.pbt";
+@end;
+@begin Targets
+ 0 "ambiente.pbt";
+ 10 "log.pbt";
+ 1 "conf_averp.pbt";
+ 11 "folharosto.pbt";
+ 2 "cont_usuarios.pbt";
+ 12 "avaliacoes.pbt";
+ 3 "cpre.pbt";
+ 4 "negociar.pbt";
+ 5 "producao.pbt";
+ 6 "assistencia.pbt";
+ 7 "transporte.pbt";
+ 8 "rh_dp.pbt";
+ 9 "task_manager.pbt";
+@end;
+DefaultTarget "avaliacoes.pbt";
+DefaultRemoteTarget "avaliacoes.pbt";
