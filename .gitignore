@@ -1,9 +1,10 @@
 # PowerBuilder files
 *.opt
 *.db
-*.dll
-*.exe
 *.pbd
+
+#NodeJS Project
+node_modules/
 
 # User-specific files
 *.rsuser
