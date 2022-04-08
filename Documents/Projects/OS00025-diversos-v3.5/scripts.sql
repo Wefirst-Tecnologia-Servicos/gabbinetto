@@ -1,0 +1,5 @@
+--> SENT:
+
+ALTER TABLE av_avaliador ADD COLUMN ativo TINYINT NOT NULL DEFAULT 1;
+
+--> NOT SENT:
