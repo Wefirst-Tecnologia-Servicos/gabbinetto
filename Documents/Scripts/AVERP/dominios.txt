@@ -1,0 +1,6 @@
+TAREFAS:
+  id_avaliador <= id_usuario
+
+USUARIOS:
+  BRENO: id_usuario = 37
+         id_funcionario (tarefas) = 68
