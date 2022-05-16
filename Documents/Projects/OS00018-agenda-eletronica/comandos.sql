@@ -118,3 +118,5 @@ ALTER TABLE atv_tarefa ADD (
 );
 
 -------------------- Ainda não rodou no cliente -------------------------
+
+ALTER TABLE atv_tarefa ADD COLUMN observacao VARCHAR(255);
