@@ -123,7 +123,7 @@ function somenteProducao() {
     }
     // segue com as demais automações
     var bRet = sTipoPP == "S";
-    var camposProdutos = ["assentos", "mobiliario", "divisorias", "arq_deslizante", "outros"];
+    var camposProdutos = ["assentos", "mobiliario", "divisorias", "arq_deslizante", "painel", "outros"];
     for (var i = 0; i < camposProdutos.length; i++) {
         if (bRet) $("#vl_" + camposProdutos[i]).val(0).maskMoney({ thousands: '.', decimal: ',', allowZero: true, prefix: 'R$ ' }).attr("disabled", "disabled");
         else $("#vl_" + camposProdutos[i]).removeAttr("disabled");
@@ -357,6 +357,7 @@ function f_get_orcamento(dados) {
                 }
             });
             $("#desconto, #desconto_r, #desconto_v").val(dados.desconto);
+            if (dados.use_acustica) $("spnArqDesl").text("Arq. Desl.");
             $("input.percentual").each(function () {
                 $(this).val($(this).val().replace(".", ","));
             });

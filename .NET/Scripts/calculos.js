@@ -32,7 +32,7 @@ var dicionarioCampos = {
     inputs: {
         exportacao: "#exportacao",
         divisaoNfServico: "#nf_servico",
-        produtos: ["assentos", "mobiliario", "divisorias", "arq_deslizante", "outros"],
+        produtos: ["assentos", "mobiliario", "divisorias", "arq_deslizante", "painel", "outros"],
         descontos: "#desconto, #desconto_arquiteto, #desconto_servico, #desconto_a_vista",
         fm: "#vl_entrega, #vl_montagem, #vl_taxa_urgencia",
         forma_pagamento: {

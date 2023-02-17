@@ -17,5 +17,5 @@ Save Format v3.0(19990112)
  8 "rh_dp.pbt";
  9 "task_manager.pbt";
 @end;
-DefaultTarget "negociar.pbt";
-DefaultRemoteTarget "negociar.pbt";
+DefaultTarget "folharosto.pbt";
+DefaultRemoteTarget "folharosto.pbt";

@@ -441,9 +441,14 @@
                         <input type="hidden" id="ipi_divisorias" parametro="true" />
                     </label>
                     <label max="150px">
-                        Arq. Desl. (<span id="spn_ipi_arq_deslizante"></span> %):
-                        <input type="text" id="vl_arq_deslizante" parametro="true" value="0" class="moeda" validationRule="$(this).val() != ''" validationMessage="- Informe o valor dos Arquivos Deslizantes" />
+                        <span id="spnArqDesl">Acústica</span> (<span id="spn_ipi_arq_deslizante"></span> %):
+                        <input type="text" id="vl_arq_deslizante" parametro="true" value="0" class="moeda" validationRule="$(this).val() != ''" validationMessage="- Informe o valor das Acústicas" />
                         <input type="hidden" id="ipi_arq_deslizante" parametro="true" />
+                    </label>
+                    <label max="150px">
+                        Painel Rip. (<span id="spn_ipi_painel"></span> %):
+                        <input type="text" id="vl_painel" parametro="true" class="moeda" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o valor dos Painéis Ripados" />
+                        <input type="hidden" id="ipi_painel" parametro="true" />
                     </label>
                     <label max="150px">
                         Outros (<span id="spn_ipi_outros"></span> %):
@@ -738,7 +743,7 @@
                 <li class="ui-li-static ui-body-a ui-last-child">
                     <input type="file" id="anexo_nome" validationRule="$(this).val() != '' || !validarAnexo" validationMessage="- Inclua a proposta (anexo)" />
                     <center>
-                        <div id="enviar" class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="gerarVisita('N');">Enviar Pedido</div>
+                        <div class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="gerarVisita('N');">Enviar Pedido</div>
                         <div id="alterar" class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#f66; border: solid 1px #c33; max-width:500px; padding:20px; text-transform:uppercase;" onclick="gerarVisita('S');">Somente Alterar Informações</div>
                     </center>
                 </li>

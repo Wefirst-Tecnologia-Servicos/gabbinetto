@@ -623,12 +623,12 @@ function habilitarProdutosPP(bState) {
 	if (bState) {
 		$("#ttblProdutos, #lblAgravo").show();
 		$("#btnAdicionarProduto").removeAttr("disabled");
-		$("#vl_assentos, #vl_mobiliario, #vl_divisorias, #vl_arq_deslizante, #vl_outros").attr("disabled", "disabled");
+		$("#vl_assentos, #vl_mobiliario, #vl_divisorias, #vl_arq_deslizante, #vl_painel, #vl_outros").attr("disabled", "disabled");
 	} else {
 		$("#bdProdutos").empty();
 		$("#ttblProdutos, #lblAgravo").hide();
 		$("#btnAdicionarProduto").attr("disabled", "disabled");
-		$("#vl_assentos, #vl_mobiliario, #vl_divisorias, #vl_arq_deslizante, #vl_outros").removeAttr("disabled");
+		$("#vl_assentos, #vl_mobiliario, #vl_divisorias, #vl_arq_deslizante, #vl_painel, #vl_outros").removeAttr("disabled");
 	}
 }
 

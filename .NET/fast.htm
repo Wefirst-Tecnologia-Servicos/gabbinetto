@@ -42,7 +42,7 @@
 			if ($("#nf_servico option:selected").val() != "N") $("#desconto_servico").removeAttr("disabled");
 			else $("#desconto_servico").val("0").attr("disabled", "disabled");
 
-			var camposProdutos = ["assentos", "mobiliario", "divisorias", "arq_deslizante", "outros"];
+			var camposProdutos = ["assentos", "mobiliario", "divisorias", "arq_deslizante", "painel", "outros"];
 			var camposDesconto = $("#tipo").val() == "V" ? ["_v", "_arquiteto", "_servico", "_a_vista"] : ["_r"];
 
 			// busca o desconto
@@ -171,7 +171,7 @@
 					* ((100 - parseFloat($("#desconto_servico").val())) / 100)
 					* ((100 - parseFloat($("#desconto_a_vista").val())) / 100);
 
-				var camposProdutos = ["assentos", "mobiliario", "divisorias", "arq_deslizante", "outros"];
+				var camposProdutos = ["assentos", "mobiliario", "divisorias", "arq_deslizante", "painel", "outros"];
 
 				for (var i = 0; i < camposProdutos.length; i++) {
 					if ($("#vl_" + camposProdutos[i]).val() == "") $("#vl_" + camposProdutos[i]).maskMoney(0);
@@ -346,70 +346,76 @@
 			
             <ul class="ui-listview ui-listview-inset ui-corner-all">
                 <li class="ui-li-divider ui-bar-a ui-first-child">Informações de Negociação</li>
-                <li class="ui-li-static ui-body-a">
-				
+				<li class="ui-li-static ui-body-a">
+
 					<table cellpadding="0" cellspacing="0" class="ui-corner-all grid" style="width:100%; margin-bottom:20px;">
 						<thead>
-							<th style="width:100px">C&oacute;digo</th>
-							<th>Descri&ccedil;&atilde;o</th>
-							<th style="width:80px; display:none;">Cor</th>
-							<th style="width:100px">Revestimento</th>
-							<th style="width:100px">Vl. Unit.</th>
-							<th style="width:40px">Qtde.</th>
-							<th style="width:100px">Vl. Total</th>
-							<th style="width:100px; padding:0 10px; white-space:nowrap;">
-								<div class="ui-btn ui-shadow ui-icon-plus ui-btn-icon-left ui-corner-all" style="padding:10px 0; background:#6f6; border: solid 1px #3c3; display:inline-table; width:40px;" onclick="selecionarProduto();">&nbsp;</div>
-								<div class="ui-btn ui-shadow ui-corner-all" style="padding: 10px 0; background: #ccc; border: solid 1px #888; display: inline-table; width: 40px;" onclick="RMNImportOpenDialog();">RMN</div>
-							</th>
+						</thead>
+						<th style="width:100px">C&oacute;digo</th>
+						<th>Descri&ccedil;&atilde;o</th>
+						<th style="width:80px; display:none;">Cor</th>
+						<th style="width:100px">Revestimento</th>
+						<th style="width:100px">Vl. Unit.</th>
+						<th style="width:40px">Qtde.</th>
+						<th style="width:100px">Vl. Total</th>
+						<th style="width:100px; padding:0 10px; white-space:nowrap;">
+							<div class="ui-btn ui-shadow ui-icon-plus ui-btn-icon-left ui-corner-all" style="padding:10px 0; background:#6f6; border: solid 1px #3c3; display:inline-table; width:40px;" onclick="selecionarProduto();">&nbsp;</div>
+							<div class="ui-btn ui-shadow ui-corner-all" style="padding: 10px 0; background: #ccc; border: solid 1px #888; display: inline-table; width: 40px;" onclick="RMNImportOpenDialog();">RMN</div>
+						</th>
 						</thead>
 						<tbody id="bdProdutos"></tbody>
 					</table>
-				
-                    <label max="150px">
-                        Assentos (<span id="spn_ipi_assentos"></span> %):
-                        <input type="text" id="vl_assentos" parametro="true" class="moeda" value="0" disabled="disabled" />
-                        <input type="hidden" id="ipi_assentos" parametro="true" />
-                    </label>
-                    <label max="150px">
-                        Mobili&aacute;rio (<span id="spn_ipi_mobiliario"></span> %):
-                        <input type="text" id="vl_mobiliario" parametro="true" class="moeda" value="0" disabled="disabled" />
-                        <input type="hidden" id="ipi_mobiliario" parametro="true" />
-                    </label>
-                    <label max="150px">
-                        Divis&oacute;rias (<span id="spn_ipi_divisorias"></span> %):
-                        <input type="text" id="vl_divisorias" parametro="true" class="moeda" value="0" disabled="disabled" />
-                        <input type="hidden" id="ipi_divisorias" parametro="true" />
-                    </label>
-                    <label max="150px">
-                        Arq. Desl. (<span id="spn_ipi_arq_deslizante"></span> %):
-                        <input type="text" id="vl_arq_deslizante" parametro="true" value="0" class="moeda" disabled="disabled" />
-                        <input type="hidden" id="ipi_arq_deslizante" parametro="true" />
-                    </label>
-                    <label max="150px">
-                        Outros (<span id="spn_ipi_outros"></span> %):
-                        <input type="text" id="vl_outros" parametro="true" class="moeda" value="0" disabled="disabled" />
-                        <input type="hidden" id="ipi_outros" parametro="true" />
-                    </label>
 
-                    <br />
-					
+					<label max="150px">
+						Assentos (<span id="spn_ipi_assentos"></span> %):
+						<input type="text" id="vl_assentos" parametro="true" class="moeda" value="0" disabled="disabled" />
+						<input type="hidden" id="ipi_assentos" parametro="true" />
+					</label>
+					<label max="150px">
+						Mobili&aacute;rio (<span id="spn_ipi_mobiliario"></span> %):
+						<input type="text" id="vl_mobiliario" parametro="true" class="moeda" value="0" disabled="disabled" />
+						<input type="hidden" id="ipi_mobiliario" parametro="true" />
+					</label>
+					<label max="150px">
+						Divis&oacute;rias (<span id="spn_ipi_divisorias"></span> %):
+						<input type="text" id="vl_divisorias" parametro="true" class="moeda" value="0" disabled="disabled" />
+						<input type="hidden" id="ipi_divisorias" parametro="true" />
+					</label>
+					<label max="150px">
+						<span id="spnArqDesl">Acústica</span> (<span id="spn_ipi_arq_deslizante"></span> %):
+						<input type="text" id="vl_arq_deslizante" parametro="true" value="0" class="moeda" disabled="disabled" />
+						<input type="hidden" id="ipi_arq_deslizante" parametro="true" />
+					</label>
+					<label max="150px">
+						Painel Rip. (<span id="spn_ipi_painel"></span> %):
+						<input type="text" id="vl_painel" parametro="true" value="0" class="moeda" disabled="disabled" />
+						<input type="hidden" id="ipi_painel" parametro="true" />
+					</label>
+					<label max="150px">
+						Outros (<span id="spn_ipi_outros"></span> %):
+						<input type="text" id="vl_outros" parametro="true" class="moeda" value="0" disabled="disabled" />
+						<input type="hidden" id="ipi_outros" parametro="true" />
+					</label>
+
+					<br />
+
 					<label max="100px" id="lblAgravo">
-                        % Agravo:
-                        <input type="text" id="agravo" parametro="true" class="percentual" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o percentual de agravo" />
-                    </label>
-					
+						% Agravo:
+						<input type="text" id="agravo" parametro="true" class="percentual" value="0" validationRule="$(this).val() != ''" validationMessage="- Informe o percentual de agravo" />
+					</label>
+
 					<div visible="$('#tipo').val() == 'V'">
-					
+
 						<label max="100px">
 							% Desc.<br />Comercial:
 							<input type="text" id="desconto_v" class="percentual" value="0" validationRule="$('#tipo').val() != 'V' || validarDescComercial()" validationMessage="- O desconto comercial não pode ser superior a 10%" />
 						</label>
-						
+
 						<label max="100px">
 							% Desc.<br />Arquiteto:
 							<input type="text" id="desconto_arquiteto" parametro="true" class="percentual" value="0" validationRule="$('#tipo').val() != 'V' || validarDescArquiteto()" validationMessage="- A soma do desconto do arquiteto com seu percentual de reserva não pode superar 10%" />
 						</label>
-						
+
 						<label max="100px">
 							% Desc.<br />Servico:
 							<input type="text" id="desconto_servico" parametro="true" class="percentual" value="0" validationRule="$('#tipo').val() != 'V' || validarDescServico()" validationMessage="O desconto de serviço deve ser de no máximo 5%" />
@@ -420,73 +426,73 @@
 						</label>
 						<label max="100px">
 							N.F.<br />Serviço:
-								<select value="N" id="nf_servico" parametro="true" onchange="calcular();" value="0" jput="nf_servico">
-									<option value="{{json.codigo}}" porc_venda="{{json.porc_venda}}">{{json.texto}}</option>
-								</select>
+							<select value="N" id="nf_servico" parametro="true" onchange="calcular();" value="0" jput="nf_servico">
+								<option value="{{json.codigo}}" porc_venda="{{json.porc_venda}}">{{json.texto}}</option>
+							</select>
 						</label>
 
 					</div>
 
-                    <br />
+					<br />
 
-                    <label max="150px">
-                        Total (sem IPI):
-                        <input type="text" disabled="disabled" id="vl_total_sem_ipi" class="moeda" />
-                    </label>
-                    <label max="150px">
-                        Total (com IPI):
-                        <input type="text" disabled="disabled" id="vl_total_com_ipi" class="moeda" />
-                    </label>
-					
+					<label max="150px">
+						Total (sem IPI):
+						<input type="text" disabled="disabled" id="vl_total_sem_ipi" class="moeda" />
+					</label>
+					<label max="150px">
+						Total (com IPI):
+						<input type="text" disabled="disabled" id="vl_total_com_ipi" class="moeda" />
+					</label>
+
 					<label max="100px" visible="$('#tipo').val() == 'R'">
-                        % Desconto:
-                        <input type="text" id="desconto_r" class="percentual" />
-                    </label>
-					
-					<label max="150px" visible="$('#tipo').val() == 'R'">
-                        Total Desc.(s/ IPI):
-                        <input type="text" disabled="disabled" id="vl_total_sem_ipi_desc" class="moeda" />
-                    </label>
-                    <label max="150px">
-                        Total Desc.(c/ IPI):
-                        <input type="text" disabled="disabled" id="vl_total_com_ipi_desc" class="moeda" />
-                    </label>
+						% Desconto:
+						<input type="text" id="desconto_r" class="percentual" />
+					</label>
 
-                    <label extende="">
-                        Op&ccedil;&atilde;o de Pagamento:
-                        <select id="cod_fopag" parametro="true" jput="fopag" onchange="enable(this.value); calcular();" value="0" validationRule="parseInt($(this).val()) > -1" validationMessage="- Informe a Opção de Pagamento">
-                            <option value="{{json.codigo}}" desconto="{{json.desconto}}" desc_sem_ie_com_fecop="{{json.desc_sem_ie_com_fecop}}" desc_sem_ie_sem_fecop="{{json.desc_sem_ie_sem_fecop}}" tipo_dias="{{json.tipo_dias}}" dias_0="{{json.dias_0}}" dias_7="{{json.dias_7}}" dias_10="{{json.dias_10}}" dias_14="{{json.dias_14}}" dias_20="{{json.dias_20}}" dias_28="{{json.dias_28}}" dias_30="{{json.dias_30}}" dias_42="{{json.dias_42}}" dias_56="{{json.dias_56}}" dias_60="{{json.dias_60}}" dias_90="{{json.dias_90}}" dias_120="{{json.dias_120}}" dias_150="{{json.dias_150}}">{{json.descricao}}</option>
-                        </select>
-                    </label>
-					
+					<label max="150px" visible="$('#tipo').val() == 'R'">
+						Total Desc.(s/ IPI):
+						<input type="text" disabled="disabled" id="vl_total_sem_ipi_desc" class="moeda" />
+					</label>
+					<label max="150px">
+						Total Desc.(c/ IPI):
+						<input type="text" disabled="disabled" id="vl_total_com_ipi_desc" class="moeda" />
+					</label>
+
+					<label extende="">
+						Op&ccedil;&atilde;o de Pagamento:
+						<select id="cod_fopag" parametro="true" jput="fopag" onchange="enable(this.value); calcular();" value="0" validationRule="parseInt($(this).val()) > -1" validationMessage="- Informe a Opção de Pagamento">
+							<option value="{{json.codigo}}" desconto="{{json.desconto}}" desc_sem_ie_com_fecop="{{json.desc_sem_ie_com_fecop}}" desc_sem_ie_sem_fecop="{{json.desc_sem_ie_sem_fecop}}" tipo_dias="{{json.tipo_dias}}" dias_0="{{json.dias_0}}" dias_7="{{json.dias_7}}" dias_10="{{json.dias_10}}" dias_14="{{json.dias_14}}" dias_20="{{json.dias_20}}" dias_28="{{json.dias_28}}" dias_30="{{json.dias_30}}" dias_42="{{json.dias_42}}" dias_56="{{json.dias_56}}" dias_60="{{json.dias_60}}" dias_90="{{json.dias_90}}" dias_120="{{json.dias_120}}" dias_150="{{json.dias_150}}">{{json.descricao}}</option>
+						</select>
+					</label>
+
 					<div id="dadosCartao">
-                        <label>
-                            Cartão de Crédito:
-                            <select id="cartao_bandeira" parametro="true" jput="cartoes">
-                                <option value="{{json.id_bandeira}}">{{json.cartao}}</option>
-                            </select>
-                        </label>
-                        <label>
-                            Número do Cartão:
-                            <input id="cartao_num_cartao" parametro="true" maxlength="20" />
-                        </label>
-                        <label max="150px">
-                            Cód. Segurança:
-                            <input id="cartao_cod_seguranca" parametro="true" maxlength="3" />
-                        </label>
-                        <label max="150px">
-                            Num. Parcelas:
-                            <input id="cartao_parcelas" parametro="true" maxlength="2" />
-                        </label>
-                    </div>
-                    
-                </li>
+						<label>
+							Cartão de Crédito:
+							<select id="cartao_bandeira" parametro="true" jput="cartoes">
+								<option value="{{json.id_bandeira}}">{{json.cartao}}</option>
+							</select>
+						</label>
+						<label>
+							Número do Cartão:
+							<input id="cartao_num_cartao" parametro="true" maxlength="20" />
+						</label>
+						<label max="150px">
+							Cód. Segurança:
+							<input id="cartao_cod_seguranca" parametro="true" maxlength="3" />
+						</label>
+						<label max="150px">
+							Num. Parcelas:
+							<input id="cartao_parcelas" parametro="true" maxlength="2" />
+						</label>
+					</div>
+
+				</li>
 				
                 <li class="ui-li-divider ui-bar-a">&nbsp;</li>
                 <li class="ui-li-static ui-body-a ui-last-child">
                     <center>
-						<div id="alterar" class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#f66; border: solid 1px #c33; max-width:500px; padding:20px; text-transform:uppercase;" onclick="enviarPedidoProp('S');">Salvar Proposta</div>
-                        <div id="enviar" class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="enviarPedidoProp('N');">Converter para Pedido</div>
+						<div class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#f66; border: solid 1px #c33; max-width:500px; padding:20px; text-transform:uppercase;" onclick="enviarPedidoProp('S');">Salvar Proposta</div>
+                        <div class="ui-btn ui-shadow ui-icon-check ui-btn-icon-right ui-corner-all" style="margin-top:40px; background:#6f6; border: solid 1px #3c3; max-width:500px; padding:20px; text-transform:uppercase;" onclick="enviarPedidoProp('N');">Converter para Pedido</div>
                     </center>
                 </li>
             </ul>
